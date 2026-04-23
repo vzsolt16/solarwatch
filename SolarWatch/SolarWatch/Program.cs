@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using SolarWatch.Data;
 using SolarWatch.Services;
 using SolarWatch.Models;
 
@@ -13,6 +15,13 @@ builder.Services.AddSwaggerGen();
 // Register HttpClients
 builder.Services.AddHttpClient<IGeocodingService, GeocodingService>();
 builder.Services.AddHttpClient<ISunriseSunsetService, SunriseSunsetService>();
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+// sql
+builder.Services.AddDbContext<SolarWatchDbContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 
