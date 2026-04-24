@@ -25,6 +25,27 @@ builder.Services.AddDbContext<SolarWatchDbContext>(options =>
 
 var app = builder.Build();
 
+// Apply migrations on startup with retry logic
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<SolarWatchDbContext>();
+    var retries = 10;
+    while (retries-- > 0)
+    {
+        try
+        {
+            db.Database.Migrate();
+            break;
+        }
+        catch
+        {
+            if (retries == 0) throw;
+            Thread.Sleep(3000);
+        }
+    }
+}
+
+
 // Configure pipeline
 if (app.Environment.IsDevelopment())
 {
