@@ -1,12 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using SolarWatch.Data;
 using SolarWatch.Models.Entities;
-
-namespace SolarWatch.Services;
-
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using SolarWatch.Models;
+
+namespace SolarWatch.Services;
+
 
 public class SunriseSunsetService : ISunriseSunsetService
 {
