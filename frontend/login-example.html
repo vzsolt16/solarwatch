@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>SolarWatch - Access Your Celestial Insights</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: #f7f9fb;
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#e0e3e5",
+                        "surface-bright": "#f7f9fb",
+                        "on-tertiary-container": "#4e3e00",
+                        "tertiary-container": "#cea700",
+                        "surface-dim": "#d8dadc",
+                        "on-secondary": "#ffffff",
+                        "secondary-container": "#fd761a",
+                        "surface-container-high": "#e6e8ea",
+                        "on-tertiary-fixed-variant": "#574500",
+                        "outline-variant": "#c6c6cd",
+                        "inverse-surface": "#2d3133",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-surface": "#191c1e",
+                        "surface-tint": "#565e74",
+                        "on-primary": "#ffffff",
+                        "primary-fixed": "#dae2fd",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#783200",
+                        "surface-container-low": "#f2f4f6",
+                        "tertiary": "#735c00",
+                        "tertiary-fixed-dim": "#eec200",
+                        "primary-container": "#131b2e",
+                        "on-secondary-container": "#5c2400",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "surface-container": "#eceef0",
+                        "primary-fixed-dim": "#bec6e0",
+                        "primary": "#000000",
+                        "background": "#f7f9fb",
+                        "error": "#ba1a1a",
+                        "surface": "#f7f9fb",
+                        "on-tertiary-fixed": "#231b00",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "secondary": "#9d4300",
+                        "secondary-fixed-dim": "#ffb690",
+                        "on-primary-container": "#7c839b",
+                        "on-secondary-fixed": "#341100",
+                        "on-primary-fixed": "#131b2e",
+                        "inverse-primary": "#bec6e0",
+                        "tertiary-fixed": "#ffe083",
+                        "on-background": "#191c1e",
+                        "surface-variant": "#e0e3e5",
+                        "error-container": "#ffdad6",
+                        "outline": "#76777d",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#45464d",
+                        "secondary-fixed": "#ffdbca"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "24px",
+                        "gutter": "16px",
+                        "xl": "80px",
+                        "xs": "4px",
+                        "lg": "48px",
+                        "margin": "24px",
+                        "sm": "12px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "label-lg": ["Manrope"],
+                        "label-sm": ["Manrope"],
+                        "headline-sm": ["Manrope"],
+                        "headline-md": ["Manrope"],
+                        "body-md": ["Manrope"],
+                        "body-lg": ["Manrope"],
+                        "headline-lg": ["Manrope"]
+                    },
+                    "fontSize": {
+                        "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-md": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-lg": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-surface-bright text-on-surface flex flex-col min-h-screen">
+<!-- TopNavBar (Shell Rule: Suppressed on focused Transactional pages, but specific user request includes it) -->
+<nav class="fixed top-0 w-full z-50 bg-surface dark:bg-background shadow-sm shadow-primary/5">
+    <div class="flex justify-between items-center px-margin py-md w-full max-w-7xl mx-auto">
+        <div class="font-headline-sm text-headline-sm font-bold text-primary dark:text-primary-fixed">SolarWatch</div>
+        <div class="hidden md:flex items-center gap-lg">
+            <a class="text-on-surface-variant font-label-lg text-label-lg hover:text-secondary transition-colors duration-200" href="#">Search</a>
+            <a class="text-on-surface-variant font-label-lg text-label-lg hover:text-secondary transition-colors duration-200" href="#">Sun Map</a>
+            <a class="text-on-surface-variant font-label-lg text-label-lg hover:text-secondary transition-colors duration-200" href="#">Almanac</a>
+        </div>
+        <div class="flex items-center gap-gutter">
+            <button class="text-primary dark:text-primary-fixed font-bold border-b-2 border-primary dark:border-primary-fixed pb-1 font-label-lg text-label-lg">Sign In</button>
+            <button class="text-on-surface-variant font-label-lg text-label-lg hover:text-secondary transition-colors duration-200">Register</button>
+        </div>
+    </div>
+</nav>
+<!-- Main Content Area: Centered Canvas -->
+<main class="flex-grow flex items-center justify-center pt-xl pb-xl px-margin">
+    <div class="w-full max-w-md bg-surface-container-lowest rounded-xl shadow-sm shadow-primary/10 overflow-hidden">
+        <!-- Celestial Header Image for Login -->
+        <div class="h-40 w-full relative">
+            <img alt="Celestial Horizon" class="w-full h-full object-cover" data-alt="A breathtaking view of the golden solar horizon during a tranquil sunset. The sky is a gradient of deep midnight blue transitioning into a vibrant, glowing orange dawn. Subtle, minimalist clouds are scattered across the vast atmosphere, reflecting the serene and awe-inspiring personality of a precision celestial observation brand. The lighting is soft and ethereal, emphasizing high-contrast celestial beauty." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxwtqRvDL-XwHwKOagpJxb7dXyyWjWMdDOTey_frQQoVVI8OU8VpQRYnOmx60DizqbuHZ1eo0V66iWVOuHNkKwnno5qttsP20Uhf8eAN4gYTMrr4xi37fiqpOCfa0I5P_JnQv63xjZ-_7rnLGu7gxAN8WLBsCkSYXXW8o-tmruoIwTeap9dEM1_V5dmtBQYT3axn-B33sJT2mLbyNH1B266rMH1YfWywL195UgLoMs7HDHd1dlVNMvrhj-B19_qvN-Ma_zHFbogH2X"/>
+            <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest to-transparent"></div>
+        </div>
+        <!-- Interaction Card -->
+        <div class="p-lg flex flex-col gap-lg">
+            <div class="text-center">
+                <h1 class="font-headline-md text-headline-md text-primary mb-base">Welcome Back</h1>
+                <p class="font-body-md text-body-md text-on-surface-variant">Precision celestial insights await your return.</p>
+            </div>
+            <!-- Toggle Selector -->
+            <div class="flex bg-surface-container-low p-xs rounded-lg">
+                <button class="flex-1 py-sm rounded-lg bg-surface-container-lowest shadow-sm text-primary font-label-lg text-label-lg transition-all">Sign In</button>
+                <button class="flex-1 py-sm rounded-lg text-on-surface-variant font-label-lg text-label-lg hover:text-primary transition-all">Register</button>
+            </div>
+            <!-- Form -->
+            <form class="flex flex-col gap-md">
+                <div class="flex flex-col gap-xs">
+                    <label class="font-label-sm text-label-sm text-on-surface-variant ml-xs">Email Address</label>
+                    <input class="w-full px-md py-sm bg-surface-container-low border-b-2 border-transparent focus:border-primary focus:ring-0 transition-all font-body-md text-body-md rounded-t-lg outline-none" placeholder="observer@solarwatch.com" type="email"/>
+                </div>
+                <div class="flex flex-col gap-xs">
+                    <label class="font-label-sm text-label-sm text-on-surface-variant ml-xs">Password</label>
+                    <input class="w-full px-md py-sm bg-surface-container-low border-b-2 border-transparent focus:border-primary focus:ring-0 transition-all font-body-md text-body-md rounded-t-lg outline-none" placeholder="••••••••" type="password"/>
+                </div>
+                <button class="w-full py-md bg-primary text-on-primary font-label-lg text-label-lg rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-sm shadow-primary/20" type="submit">
+                    Continue to Almanac
+                </button>
+            </form>
+            <!-- Social/Alt Access -->
+        </div>
+    </div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-low dark:bg-surface-container-lowest">
+    <div class="flex flex-col md:flex-row justify-between items-center px-margin py-xl w-full max-w-7xl mx-auto gap-md">
+        <div class="flex flex-col items-center md:items-start gap-xs">
+            <div class="font-label-lg text-label-lg font-bold text-primary dark:text-primary-fixed">SolarWatch</div>
+            <div class="font-label-sm text-label-sm text-on-surface-variant">© 2024 SolarWatch. Precision in every ray.</div>
+        </div>
+        <div class="flex gap-lg">
+            <a class="text-on-surface-variant font-label-sm text-label-sm hover:text-secondary transition-colors duration-200" href="#">Privacy Policy</a>
+            <a class="text-on-surface-variant font-label-sm text-label-sm hover:text-secondary transition-colors duration-200" href="#">Terms of Service</a>
+            <a class="text-on-surface-variant font-label-sm text-label-sm hover:text-secondary transition-colors duration-200" href="#">Contact</a>
+        </div>
+    </div>
+</footer>
+</body></html>

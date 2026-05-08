@@ -23,7 +23,7 @@ public class SolarTimesController : ControllerBase
 
     // User + Admin
     [HttpGet]
-    [Authorize(Roles = $"{Roles.User}, {Roles.Admin}")]
+    [Authorize(Roles = $"{Roles.User},{Roles.Admin}")]
     public async Task<ActionResult<SolarResult>> Get(
         [FromQuery] string city,
         [FromQuery] DateTime date,

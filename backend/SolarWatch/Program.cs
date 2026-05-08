@@ -32,6 +32,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors("AllowFrontend");
+
 app.UseAuthentication();   // must come before UseAuthorization
 app.UseAuthorization();
 
@@ -47,6 +49,13 @@ void AddServices()
 {
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowFrontend",
+            policy => policy.WithOrigins("http://localhost:5173") // Vite's default port
+                            .AllowAnyMethod()
+                            .AllowAnyHeader());
+    });
 
     // Typed HttpClient avoids socket exhaustion from new HttpClient() per call.
     builder.Services.AddHttpClient<IGeocodingService, GeocodingService>();

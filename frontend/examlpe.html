@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>SolarWatch | Precision in Every Ray</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#e0e3e5",
+                        "surface-bright": "#f7f9fb",
+                        "on-tertiary-container": "#4e3e00",
+                        "tertiary-container": "#cea700",
+                        "surface-dim": "#d8dadc",
+                        "on-secondary": "#ffffff",
+                        "secondary-container": "#fd761a",
+                        "surface-container-high": "#e6e8ea",
+                        "on-tertiary-fixed-variant": "#574500",
+                        "outline-variant": "#c6c6cd",
+                        "inverse-surface": "#2d3133",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-surface": "#191c1e",
+                        "surface-tint": "#565e74",
+                        "on-primary": "#ffffff",
+                        "primary-fixed": "#dae2fd",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#783200",
+                        "surface-container-low": "#f2f4f6",
+                        "tertiary": "#735c00",
+                        "tertiary-fixed-dim": "#eec200",
+                        "primary-container": "#131b2e",
+                        "on-secondary-container": "#5c2400",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "surface-container": "#eceef0",
+                        "primary-fixed-dim": "#bec6e0",
+                        "primary": "#000000",
+                        "background": "#f7f9fb",
+                        "error": "#ba1a1a",
+                        "surface": "#f7f9fb",
+                        "on-tertiary-fixed": "#231b00",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "secondary": "#9d4300",
+                        "secondary-fixed-dim": "#ffb690",
+                        "on-primary-container": "#7c839b",
+                        "on-secondary-fixed": "#341100",
+                        "on-primary-fixed": "#131b2e",
+                        "inverse-primary": "#bec6e0",
+                        "tertiary-fixed": "#ffe083",
+                        "on-background": "#191c1e",
+                        "surface-variant": "#e0e3e5",
+                        "error-container": "#ffdad6",
+                        "outline": "#76777d",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#45464d",
+                        "secondary-fixed": "#ffdbca"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "24px",
+                        "gutter": "16px",
+                        "xl": "80px",
+                        "xs": "4px",
+                        "lg": "48px",
+                        "margin": "24px",
+                        "sm": "12px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "label-lg": ["Manrope"],
+                        "label-sm": ["Manrope"],
+                        "headline-sm": ["Manrope"],
+                        "headline-md": ["Manrope"],
+                        "body-md": ["Manrope"],
+                        "body-lg": ["Manrope"],
+                        "headline-lg": ["Manrope"]
+                    },
+                    "fontSize": {
+                        "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-md": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-lg": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body { font-family: 'Manrope', sans-serif; }
+        .sun-arc-path {
+            stroke-dasharray: 400;
+            stroke-dashoffset: 400;
+        }
+        .celestial-shadow {
+            box-shadow: 0 10px 30px -10px rgba(19, 27, 46, 0.08);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface selection:bg-secondary-fixed selection:text-on-secondary-fixed">
+<!-- TopNavBar -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-md shadow-sm shadow-primary/5">
+    <nav class="flex justify-between items-center px-margin py-md w-full max-w-7xl mx-auto">
+        <div class="flex items-center gap-xl">
+            <a class="font-headline-sm text-headline-sm font-bold text-primary" href="#">SolarWatch</a>
+            <div class="hidden md:flex gap-lg items-center">
+                <a class="text-primary font-bold border-b-2 border-primary pb-1 font-label-lg text-label-lg transition-transform active:scale-95" href="#">Search</a>
+                <a class="text-on-surface-variant font-label-lg text-label-lg hover:text-secondary transition-colors duration-200" href="#">Sun Map</a>
+                <a class="text-on-surface-variant font-label-lg text-label-lg hover:text-secondary transition-colors duration-200" href="#">Almanac</a>
+            </div>
+        </div>
+        <div class="flex gap-gutter items-center">
+            <button class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-colors px-sm py-xs">Sign In</button>
+            <button class="font-label-lg text-label-lg bg-primary text-on-primary px-md py-xs rounded-full hover:bg-primary-container transition-all active:scale-95">Register</button>
+        </div>
+    </nav>
+</header>
+<main class="pt-[120px] pb-xl">
+    <!-- Hero Section -->
+    <section class="max-w-7xl mx-auto px-margin mb-lg">
+        <div class="flex flex-col items-center text-center mb-lg">
+            <h1 class="font-headline-lg text-headline-lg text-primary mb-sm max-w-2xl">Precision in every ray, captured in every moment.</h1>
+            <p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">Track the sun's rhythm across the globe. Plan your photography, hikes, and mindful observations with celestial accuracy.</p>
+        </div>
+        <!-- Search Bar -->
+        <div class="w-full max-w-3xl mx-auto celestial-shadow bg-surface-container-lowest p-sm rounded-xl border border-outline-variant/30 flex flex-col md:flex-row gap-xs">
+            <div class="flex-1 flex items-center px-md py-sm bg-surface rounded-lg group focus-within:ring-2 focus-within:ring-primary/5 transition-all">
+                <span class="material-symbols-outlined text-outline mr-sm">location_on</span>
+                <input class="w-full bg-transparent border-none focus:ring-0 font-body-md text-body-md text-on-surface placeholder:text-outline" placeholder="Search for a city..." type="text"/>
+            </div>
+            <div class="flex-1 flex items-center px-md py-sm bg-surface rounded-lg group focus-within:ring-2 focus-within:ring-primary/5 transition-all">
+                <span class="material-symbols-outlined text-outline mr-sm">calendar_today</span>
+                <input class="w-full bg-transparent border-none focus:ring-0 font-body-md text-body-md text-on-surface" type="date"/>
+            </div>
+            <button class="bg-primary text-on-primary px-lg py-sm rounded-lg font-label-lg text-label-lg hover:bg-primary-container transition-all flex items-center justify-center gap-sm">
+                <span class="material-symbols-outlined text-[20px]">search</span>
+                Find Solar Data
+            </button>
+        </div>
+    </section>
+    <!-- Content Section -->
+    <section class="max-w-7xl mx-auto px-margin">
+        <div class="max-w-4xl mx-auto">
+            <!-- Main Sun Card -->
+            <div class="bg-surface-container-lowest rounded-xl p-md celestial-shadow flex flex-col justify-between min-h-[400px]">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h2 class="font-headline-md text-headline-md text-primary">Reykjavík, Iceland</h2>
+                        <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mt-xs">Current Solar Position</p>
+                    </div>
+                    <div class="flex items-center gap-xs bg-secondary-container/10 px-sm py-xs rounded-full text-secondary">
+                        <span class="material-symbols-outlined text-[16px]" data-weight="fill">light_mode</span>
+                        <span class="font-label-sm text-label-sm">Active Golden Hour</span>
+                    </div>
+                </div>
+                <!-- Custom Sun Arc Visual -->
+                <div class="relative py-lg flex justify-center items-center">
+                    <svg class="w-full max-w-lg h-auto" viewbox="0 0 400 200">
+                        <!-- Background Arc -->
+                        <path d="M 50 180 A 150 150 0 0 1 350 180" fill="none" stroke="#e0e3e5" stroke-linecap="round" stroke-width="2"></path>
+                        <!-- Active Arc -->
+                        <path d="M 50 180 A 150 150 0 0 1 200 65" fill="none" stroke="#000000" stroke-linecap="round" stroke-width="3"></path>
+                        <!-- Sun Indicator -->
+                        <circle cx="200" cy="65" fill="#000000" r="8"></circle>
+                        <circle cx="200" cy="65" fill="#fd761a" fill-opacity="0.2" r="16"></circle>
+                    </svg>
+                    <div class="absolute bottom-0 left-0 right-0 flex justify-between px-md font-label-sm text-label-sm text-outline">
+                        <span>04:12 AM</span>
+                        <span>09:44 PM</span>
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-md pt-md border-t border-outline-variant/10">
+                    <div>
+                        <p class="font-label-sm text-label-sm text-outline mb-xs">Altitude</p>
+                        <p class="font-headline-sm text-headline-sm text-primary">24.5°</p>
+                    </div>
+                    <div>
+                        <p class="font-label-sm text-label-sm text-outline mb-xs">Azimuth</p>
+                        <p class="font-headline-sm text-headline-sm text-primary">182.1°</p>
+                    </div>
+                    <div>
+                        <p class="font-label-sm text-label-sm text-outline mb-xs">UV Index</p>
+                        <p class="font-headline-sm text-headline-sm text-secondary">Low (2)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-low border-t border-outline-variant/10">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center px-margin py-xl w-full">
+        <div class="mb-md md:mb-0 text-center md:text-left">
+            <p class="font-label-lg text-label-lg font-bold text-primary mb-xs">SolarWatch</p>
+            <p class="font-label-sm text-label-sm text-on-surface-variant">© 2024 SolarWatch. Precision in every ray.</p>
+        </div>
+        <div class="flex flex-wrap justify-center gap-lg">
+            <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-secondary transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20" href="#">Privacy Policy</a>
+            <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-secondary transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20" href="#">Terms of Service</a>
+            <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-secondary transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20" href="#">Contact</a>
+        </div>
+    </div>
+</footer>
+</body></html>
