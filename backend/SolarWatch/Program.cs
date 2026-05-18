@@ -19,8 +19,8 @@ AddIdentity();
 
 var app = builder.Build();
 
-await SeedRolesAsync();
 await ApplyMigrationsAsync();
+await SeedRolesAsync();
 
 if (app.Environment.IsDevelopment())
 {
@@ -107,9 +107,11 @@ void AddAuthentication()
     var validAudience = builder.Configuration["Jwt:ValidAudience"]
                         ?? throw new InvalidOperationException("Jwt:ValidAudience is missing.");
     var issuerSigningKey = builder.Configuration["Jwt:IssuerSigningKey"]
-                           ?? throw new InvalidOperationException(
-                               "Jwt:IssuerSigningKey is missing. " +
-                               "Set it via: dotnet user-secrets set \"Jwt:IssuerSigningKey\" \"<secret>\"");
+                           ?? (builder.Environment.IsEnvironment("Testing")
+                               ? "this-is-a-test-signing-key-with-enough-length"
+                               : throw new InvalidOperationException(
+                                   "Jwt:IssuerSigningKey is missing. " +
+                                   "Set it via: dotnet user-secrets set \"Jwt:IssuerSigningKey\" \"<secret>\""));
 
     builder.Services
         .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -161,5 +163,13 @@ async Task ApplyMigrationsAsync()
 {
     using var scope  = app.Services.CreateScope();
     var context      = scope.ServiceProvider.GetRequiredService<SolarWatchDbContext>();
+    if (app.Environment.IsEnvironment("Testing"))
+    {
+        await context.Database.EnsureCreatedAsync();
+        return;
+    }
+
     await context.Database.MigrateAsync();
 }
+
+public partial class Program;

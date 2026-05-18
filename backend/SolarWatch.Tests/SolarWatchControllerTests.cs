@@ -1,4 +1,10 @@
-﻿namespace SolarWatch.Tests;
+﻿using Microsoft.Testing.Platform.Logging;
+using SolarWatch.Controllers;
+using SolarWatch.Exceptions;
+using SolarWatch.Models;
+using SolarWatch.Services;
+
+namespace SolarWatch.Tests;
 
 using NUnit.Framework;
 using Moq;
