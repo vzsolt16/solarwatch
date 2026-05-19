@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import SunArc from './SunArc';
 
-const SolarCard = ({ city, sunrise, sunset, timezone, loading, error }) => {
+const SolarCard = ({ city, sunrise, sunset, timezone, solarPosition, loading, error }) => {
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
@@ -27,6 +27,12 @@ const SolarCard = ({ city, sunrise, sunset, timezone, loading, error }) => {
 
   const formattedSunrise = formatTime(sunrise);
   const formattedSunset = formatTime(sunset);
+  const formatDegrees = (value) => (
+    typeof value === 'number' ? `${value.toFixed(1)}°` : '--'
+  );
+  const formatMinutes = (value) => (
+    typeof value === 'number' ? `${value.toFixed(1)} min` : '--'
+  );
   const currentCityTime = (() => {
     try {
       return new Intl.DateTimeFormat([], {
@@ -60,18 +66,36 @@ const SolarCard = ({ city, sunrise, sunset, timezone, loading, error }) => {
         sunsetLabel={formattedSunset}
       />
 
-      <div className="grid grid-cols-3 gap-md pt-md border-t border-outline-variant/10">
+      <div className="grid grid-cols-2 gap-md pt-md border-t border-outline-variant/10 sm:grid-cols-3">
         <div>
           <p className="font-label-sm text-label-sm text-outline mb-xs">Altitude</p>
-          <p className="font-headline-sm text-headline-sm font-bold text-primary">24.5°</p>
+          <p className="font-headline-sm text-headline-sm font-bold text-primary">
+            {formatDegrees(solarPosition?.elevation)}
+          </p>
         </div>
         <div>
           <p className="font-label-sm text-label-sm text-outline mb-xs">Azimuth</p>
-          <p className="font-headline-sm text-headline-sm font-bold text-primary">182.1°</p>
+          <p className="font-headline-sm text-headline-sm font-bold text-primary">
+            {formatDegrees(solarPosition?.azimuth)}
+          </p>
         </div>
         <div>
-          <p className="font-label-sm text-label-sm text-outline mb-xs">UV Index</p>
-          <p className="font-headline-sm text-headline-sm font-bold text-secondary">Low (2)</p>
+          <p className="font-label-sm text-label-sm text-outline mb-xs">Declination</p>
+          <p className="font-headline-sm text-headline-sm font-bold text-primary">
+            {formatDegrees(solarPosition?.declination)}
+          </p>
+        </div>
+        <div>
+          <p className="font-label-sm text-label-sm text-outline mb-xs">Hour Angle</p>
+          <p className="font-headline-sm text-headline-sm font-bold text-secondary">
+            {formatDegrees(solarPosition?.hourAngle)}
+          </p>
+        </div>
+        <div>
+          <p className="font-label-sm text-label-sm text-outline mb-xs">Equation of Time</p>
+          <p className="font-headline-sm text-headline-sm font-bold text-secondary">
+            {formatMinutes(solarPosition?.equationOfTime)}
+          </p>
         </div>
       </div>
     </div>

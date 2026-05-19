@@ -44,6 +44,13 @@ public class SunriseSunsetService : ISunriseSunsetService
 
         var timeZoneId = await GetCachedTimeZoneIdAsync(cityEntity, location);
         var timeZoneInfo = GetTimeZoneInfo(timeZoneId);
+        var localCalculationTime = GetLocalCalculationTime(date, timeZoneInfo);
+        var solarPosition = SolarCalculator.GetSolarPosition(
+            localCalculationTime,
+            location.Latitude,
+            location.Longitude,
+            timeZoneInfo.GetUtcOffset(localCalculationTime).TotalMinutes
+        );
 
         if (cityEntity != null)
         {
@@ -65,7 +72,8 @@ public class SunriseSunsetService : ISunriseSunsetService
                     Date = date,
                     Sunrise = utc ? cachedSunriseUtc : ConvertUtcToTimeZone(cachedSunriseUtc, timeZoneInfo),
                     Sunset = utc ? cachedSunsetUtc : ConvertUtcToTimeZone(cachedSunsetUtc, timeZoneInfo),
-                    Timezone = utc ? "UTC" : timeZoneId
+                    Timezone = utc ? "UTC" : timeZoneId,
+                    SolarPosition = solarPosition
                 };
             }
         }
@@ -132,7 +140,8 @@ public class SunriseSunsetService : ISunriseSunsetService
             Date = date,
             Sunrise = sunrise,
             Sunset = sunset,
-            Timezone = utc ? "UTC" : timeZoneId
+            Timezone = utc ? "UTC" : timeZoneId,
+            SolarPosition = solarPosition
         };
     }
 
@@ -202,6 +211,21 @@ public class SunriseSunsetService : ISunriseSunsetService
         value.Kind == DateTimeKind.Utc
             ? value
             : DateTime.SpecifyKind(value, DateTimeKind.Utc);
+
+    private static DateTime GetLocalCalculationTime(DateTime selectedDate, TimeZoneInfo timeZoneInfo)
+    {
+        var cityNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZoneInfo);
+
+        return new DateTime(
+            selectedDate.Year,
+            selectedDate.Month,
+            selectedDate.Day,
+            cityNow.Hour,
+            cityNow.Minute,
+            cityNow.Second,
+            DateTimeKind.Unspecified
+        );
+    }
 
     private class SunriseSunsetApiResponse
     {

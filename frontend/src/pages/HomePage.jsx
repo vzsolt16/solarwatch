@@ -52,6 +52,7 @@ const HomePage = () => {
             sunrise={solarData?.sunrise}
             sunset={solarData?.sunset}
             timezone={solarData?.timezone}
+            solarPosition={solarData?.solarPosition}
             loading={loading}
             error={error}
           />

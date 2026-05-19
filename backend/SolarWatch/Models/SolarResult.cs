@@ -7,4 +7,5 @@ public class SolarResult
     public DateTime Sunrise { get; set; }
     public DateTime Sunset { get; set; }
     public string Timezone { get; set; }
+    public SolarPositionResult SolarPosition { get; set; }
 }
