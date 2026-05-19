@@ -31,7 +31,8 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             {
                 ["Jwt:ValidIssuer"] = "test-issuer",
                 ["Jwt:ValidAudience"] = "test-audience",
-                ["Jwt:IssuerSigningKey"] = "this-is-a-test-signing-key-with-enough-length"
+                ["Jwt:IssuerSigningKey"] = "this-is-a-test-signing-key-with-enough-length",
+                ["TimeZoneDb:ApiKey"] = "test-timezone-key"
             });
         });
 
@@ -54,6 +55,9 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
                     .ConfigurePrimaryHttpMessageHandler(() => _externalApiHandler);
 
                 services.AddHttpClient<ISunriseSunsetService, SunriseSunsetService>()
+                    .ConfigurePrimaryHttpMessageHandler(() => _externalApiHandler);
+
+                services.AddHttpClient<ITimeZoneService, TimeZoneService>()
                     .ConfigurePrimaryHttpMessageHandler(() => _externalApiHandler);
             }
         });

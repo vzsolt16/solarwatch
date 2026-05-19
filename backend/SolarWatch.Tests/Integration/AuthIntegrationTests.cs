@@ -91,6 +91,7 @@ public class AuthIntegrationTests
 
         externalApiHandler.GeocodingCallCount.Should().Be(1);
         externalApiHandler.SunriseSunsetCallCount.Should().Be(1);
+        externalApiHandler.TimeZoneCallCount.Should().Be(1);
 
         var secondResponse = await client.GetAsync("/api/SolarWatch?city=Budapest&date=2026-05-18&utc=true");
         secondResponse.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -100,5 +101,6 @@ public class AuthIntegrationTests
 
         externalApiHandler.GeocodingCallCount.Should().Be(1);
         externalApiHandler.SunriseSunsetCallCount.Should().Be(1);
+        externalApiHandler.TimeZoneCallCount.Should().Be(1);
     }
 }

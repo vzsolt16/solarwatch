@@ -89,7 +89,8 @@ public class GeocodingService : IGeocodingService
             Latitude = location.Lat,
             Longitude = location.Lon,
             State = null,
-            Country = "Unknown" // (you can improve later)
+            Country = "Unknown", // (you can improve later)
+            TimeZoneId = string.Empty
         };
         _dbContext.Cities.Add(cityEntity);
         await _dbContext.SaveChangesAsync();

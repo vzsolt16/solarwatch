@@ -50,7 +50,8 @@ const HomePage = () => {
           <SolarCard 
             city={solarData?.city || city}
             sunrise={solarData?.sunrise}
-            sunset={solarData?.sunset} 
+            sunset={solarData?.sunset}
+            timezone={solarData?.timezone}
             loading={loading}
             error={error}
           />

@@ -13,6 +13,7 @@ public class City
     public string? State { get; set; }
 
     public string Country { get; set; }
+    public string TimeZoneId { get; set; }
 
     // Navigation property (One city → many sunrise/sunset records)
     public ICollection<SunriseSunset> SunriseSunsets { get; set; } = new List<SunriseSunset>();

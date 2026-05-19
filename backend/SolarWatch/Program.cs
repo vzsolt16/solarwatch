@@ -60,6 +60,7 @@ void AddServices()
     // Typed HttpClient avoids socket exhaustion from new HttpClient() per call.
     builder.Services.AddHttpClient<IGeocodingService, GeocodingService>();
     builder.Services.AddHttpClient<ISunriseSunsetService, SunriseSunsetService>();
+    builder.Services.AddHttpClient<ITimeZoneService, TimeZoneService>();
 
     builder.Services.AddScoped<ICityRepository, CityRepository>();
 
