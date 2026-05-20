@@ -1,6 +1,5 @@
-using Microsoft.EntityFrameworkCore;
-using SolarWatch.Data;
 using SolarWatch.Models.Entities;
+using SolarWatch.Services.Repository;
 
 namespace SolarWatch.Services;
 
@@ -15,18 +14,18 @@ public class GeocodingService : IGeocodingService
     private readonly HttpClient _httpClient;
     private readonly IConfiguration _configuration;
     private readonly ILogger<GeocodingService> _logger;
-    private readonly SolarWatchDbContext _dbContext;
+    private readonly ICityRepository _cityRepository;
 
     public GeocodingService(
         HttpClient httpClient,
         IConfiguration configuration,
         ILogger<GeocodingService> logger,
-        SolarWatchDbContext dbContext)
+        ICityRepository cityRepository)
     {
         _httpClient = httpClient;
         _configuration = configuration;
         _logger = logger;
-        _dbContext = dbContext;
+        _cityRepository = cityRepository;
     }
 
     public async Task<Location> GetCoordinatesAsync(string city)
@@ -35,8 +34,7 @@ public class GeocodingService : IGeocodingService
             throw new ArgumentException("City cannot be empty.");
 
         // Check if city exists in DB
-        var existingCity = await _dbContext.Cities
-            .FirstOrDefaultAsync(c => c.Name.ToLower() == city.ToLower());
+        var existingCity = await _cityRepository.GetByNameAsync(city);
 
         if (existingCity != null)
         {
@@ -92,8 +90,7 @@ public class GeocodingService : IGeocodingService
             Country = "Unknown", // (you can improve later)
             TimeZoneId = string.Empty
         };
-        _dbContext.Cities.Add(cityEntity);
-        await _dbContext.SaveChangesAsync();
+        await _cityRepository.AddAsync(cityEntity);
 
         return new Location
         {

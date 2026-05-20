@@ -23,6 +23,20 @@ public class CityRepository : ICityRepository
         return await _context.Cities.FindAsync(id);
     }
 
+    public async Task<City?> GetByNameAsync(string name)
+    {
+        return await _context.Cities
+            .FirstOrDefaultAsync(c => c.Name.ToLower() == name.ToLower());
+    }
+
+    public async Task<City?> GetByCoordinatesAsync(double latitude, double longitude, double tolerance)
+    {
+        return await _context.Cities
+            .FirstOrDefaultAsync(c =>
+                Math.Abs(c.Latitude - latitude) < tolerance &&
+                Math.Abs(c.Longitude - longitude) < tolerance);
+    }
+
     public async Task<City> AddAsync(City city)
     {
         _context.Cities.Add(city);

@@ -1,10 +1,11 @@
 using Microsoft.EntityFrameworkCore;
-using SolarWatch.Data;
 using SolarWatch.Models.Entities;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using SolarWatch.Models;
 using System.Globalization;
+using SolarWatch.Services.Repository;
+using SolarWatch.Data;
 
 namespace SolarWatch.Services;
 
@@ -18,19 +19,22 @@ public class SunriseSunsetService : ISunriseSunsetService
     private readonly ITimeZoneService _timeZoneService;
     private readonly ILogger<SunriseSunsetService> _logger;
     private readonly SolarWatchDbContext _dbContext;
+    private readonly ICityRepository _cityRepository;
 
     public SunriseSunsetService(
         HttpClient httpClient,
         IGeocodingService geocodingService,
         ITimeZoneService timeZoneService,
         ILogger<SunriseSunsetService> logger,
-        SolarWatchDbContext dbContext)
+        SolarWatchDbContext dbContext,
+        ICityRepository cityRepository)
     {
         _httpClient = httpClient;
         _geocodingService = geocodingService;
         _timeZoneService = timeZoneService;
         _logger = logger;
         _dbContext = dbContext;
+        _cityRepository = cityRepository;
     }
 
     public async Task<SolarResult> GetSolarDataAsync(string city, DateTime date, bool utc)
@@ -40,7 +44,9 @@ public class SunriseSunsetService : ISunriseSunsetService
         var location = await _geocodingService.GetCoordinatesAsync(city);
 
         // Check DB first (JOIN City + filter by date)
-        var cityEntity = await FindCachedCityAsync(city, location);
+        var cityEntity = await _cityRepository.GetByNameAsync(city) ??
+                         await _cityRepository.GetByCoordinatesAsync(location.Latitude, location.Longitude,
+                             CoordinateTolerance);
 
         var timeZoneId = await GetCachedTimeZoneIdAsync(cityEntity, location);
         var timeZoneInfo = GetTimeZoneInfo(timeZoneId);
@@ -145,22 +151,6 @@ public class SunriseSunsetService : ISunriseSunsetService
         };
     }
 
-    private async Task<City?> FindCachedCityAsync(string city, Location location)
-    {
-        var cityEntity = await _dbContext.Cities
-            .FirstOrDefaultAsync(c => c.Name.ToLower() == city.ToLower());
-
-        if (cityEntity != null)
-        {
-            return cityEntity;
-        }
-
-        return await _dbContext.Cities
-            .FirstOrDefaultAsync(c =>
-                Math.Abs(c.Latitude - location.Latitude) < CoordinateTolerance &&
-                Math.Abs(c.Longitude - location.Longitude) < CoordinateTolerance);
-    }
-
     private async Task<string> GetCachedTimeZoneIdAsync(City? cityEntity, Location location)
     {
         if (cityEntity != null &&
@@ -175,7 +165,7 @@ public class SunriseSunsetService : ISunriseSunsetService
         if (cityEntity != null && CoordinatesMatch(cityEntity, location))
         {
             cityEntity.TimeZoneId = timeZoneId;
-            await _dbContext.SaveChangesAsync();
+            await _cityRepository.UpdateAsync(cityEntity);
         }
 
         return timeZoneId;
