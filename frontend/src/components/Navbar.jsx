@@ -14,7 +14,9 @@ const Navbar = () => {
     <header className="fixed top-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-md shadow-sm shadow-primary/5">
       <nav className="flex justify-between items-center px-margin py-md w-full max-w-7xl mx-auto">
         <div className="flex items-center gap-xl">
-          <Link className="font-headline-md text-headline-md font-bold text-primary" to="/">SolarWatch</Link>
+          <Link className="text-3xl font-bold text-primary tracking-tight" to="/">
+            SolarWatch
+          </Link>
           <div className="hidden md:flex gap-lg items-center">
             <Link className="font-label-lg text-label-lg text-primary font-bold border-b-2 border-primary pb-1 transition-transform active:scale-95" to="#">Search</Link>
             <Link className="font-label-lg text-label-lg text-on-surface-variant hover:text-secondary transition-colors duration-200" to="#">Sun Map</Link>

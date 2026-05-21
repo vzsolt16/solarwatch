@@ -27,7 +27,7 @@ const Hero = ({ city, date, onCityChange, onDateChange, onSearch }) => {
           />
         </div>
         <button
-          className="bg-primary text-on-primary px-lg py-sm rounded-lg font-label-lg text-label-lg hover:bg-primary-container transition-all flex items-center justify-center gap-sm"
+          className="bg-secondary text-on-secondary px-lg py-sm rounded-lg font-label-lg text-label-lg hover:bg-secondary/90 transition-all flex items-center justify-center gap-sm"
           onClick={onSearch}
         >
           <span className="material-symbols-outlined text-[20px]">search</span>
