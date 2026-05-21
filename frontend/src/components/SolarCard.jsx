@@ -24,7 +24,7 @@ const InfoButton = ({ tooltipKey, activeTooltip, setActiveTooltip, tooltipDescri
                 onClick={() =>
                     setActiveTooltip(activeTooltip === tooltipKey ? null : tooltipKey)
                 }
-                className="ml-xs text-on-surface-variant hover:text-secondary"
+                className="ml-xs text-outline hover:text-secondary"
             >
                 <span className="material-symbols-outlined text-[16px]">info</span>
             </button>
@@ -86,6 +86,7 @@ const SolarCard = ({
                    }) => {
   const [now, setNow] = useState(() => Date.now());
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showTimeline, setShowTimeline] = useState(false);
   const [activeTooltip, setActiveTooltip] = useState(null);
   const cardRef = useRef(null);
 
@@ -184,103 +185,229 @@ const SolarCard = ({
     }
   })();
 
+  const getEventDate = (baseTime, minuteOffset = 0) => {
+    if (!baseTime) return null;
+
+    const date = new Date(baseTime);
+
+    if (Number.isNaN(date.getTime())) {
+      return null;
+    }
+
+    date.setMinutes(date.getMinutes() + minuteOffset);
+    return date;
+  };
+
+  const formatTimelineTime = (date) => {
+    if (!date) return '--';
+
+    try {
+      return new Intl.DateTimeFormat([], {
+        timeZone: timezone || undefined,
+        hour: '2-digit',
+        minute: '2-digit',
+      }).format(date);
+    } catch {
+      return date.toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    }
+  };
+
+  const sunriseDate = getEventDate(sunrise);
+  const sunsetDate = getEventDate(sunset);
+  const solarNoonDate =
+      sunriseDate && sunsetDate
+          ? new Date((sunriseDate.getTime() + sunsetDate.getTime()) / 2)
+          : null;
+
+  const timelineEvents = [
+    {
+      icon: 'dark_mode',
+      label: 'Astronomical Twilight',
+      time: formatTimelineTime(getEventDate(sunrise, -90)),
+      description:
+          'The sun is roughly 18 degrees below the horizon, and the first subtle lift in the sky begins to separate night from morning.',
+    },
+    {
+      icon: 'sunny',
+      label: 'Sunrise',
+      time: formattedSunrise || '--',
+      description:
+          'The sun meets the horizon and the day opens with warm, directional light that starts carving shape into the landscape.',
+    },
+    {
+      icon: 'clear_day',
+      label: 'Solar Noon',
+      time: formatTimelineTime(solarNoonDate),
+      description:
+          'The sun reaches its highest position of the day, delivering the brightest and most direct light across the scene.',
+    },
+    {
+      icon: 'wb_sunny',
+      label: 'Sunset',
+      time: formattedSunset || '--',
+      description:
+          'The sun drops back to the horizon and the light transitions into a softer, more atmospheric palette.',
+    },
+  ];
+
   return (
-      <div ref={cardRef} className="bg-surface-container-lowest rounded-xl p-md celestial-shadow flex flex-col justify-between">
-        <div className="flex justify-between items-start">
+      <div ref={cardRef} className="bg-surface-container-lowest rounded-xl p-md celestial-shadow overflow-hidden">
+        <div className="flex items-start justify-between gap-md">
           <div>
             <h2 className="font-headline-md text-headline-md font-bold text-primary">
               {city}
             </h2>
 
-            <p className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mt-xs">
-              {timezone || 'Local'} solar position
-            </p>
+            <div className="mt-sm flex flex-wrap items-center gap-sm text-secondary">
+              <div className="flex items-center gap-xs bg-secondary-container/10 px-sm py-xs rounded-full">
+                <span className="material-symbols-outlined text-[16px]">
+                  schedule
+                </span>
+
+                <span className="font-label-sm text-label-sm">
+                  {currentCityTime || '--:--'}
+                </span>
+              </div>
+
+              <p className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">
+                {timezone || 'Local'} solar position
+              </p>
+            </div>
           </div>
 
-          <div className="flex items-center gap-xs bg-secondary-container/10 px-sm py-xs rounded-full text-secondary">
-          <span className="material-symbols-outlined text-[16px]">
-            schedule
-          </span>
-
-            <span className="font-label-sm text-label-sm">
-            {currentCityTime || '--:--'}
-          </span>
-          </div>
+          <button
+              onClick={() => {
+                setShowTimeline(!showTimeline);
+                setActiveTooltip(null);
+              }}
+              className="shrink-0 px-md py-sm rounded-full border border-secondary/20 bg-secondary-container/10 text-secondary font-label-sm text-label-sm font-semibold hover:bg-secondary/15 active:bg-secondary/20 transition-colors"
+          >
+            {showTimeline ? 'Back to overview' : 'See timeline'}
+          </button>
         </div>
 
-        <SunArc
-            sunrise={sunrise}
-            sunset={sunset}
-            timezone={timezone}
-            sunriseLabel={formattedSunrise}
-            sunsetLabel={formattedSunset}
-        />
+        <div className="mt-lg flex w-[200%] transition-transform duration-500 ease-out" style={{ transform: showTimeline ? 'translateX(-50%)' : 'translateX(0%)' }}>
+          <div className="w-1/2 pr-md">
+            <div className="flex h-full flex-col justify-between">
+              <SunArc
+                  sunrise={sunrise}
+                  sunset={sunset}
+                  timezone={timezone}
+                  sunriseLabel={formattedSunrise}
+                  sunsetLabel={formattedSunset}
+              />
+
+              {isExpanded && (
+                  <div className="mt-md pt-md border-t border-outline-variant/10">
+                    <div className="grid grid-cols-2 gap-md sm:grid-cols-3">
+                      <SolarDataField
+                          label="Altitude"
+                          value={formatDegrees(solarPosition?.elevation)}
+                          tooltipKey="altitude"
+                          activeTooltip={activeTooltip}
+                          setActiveTooltip={setActiveTooltip}
+                          tooltipDescriptions={tooltipDescriptions}
+                      />
+
+                      <SolarDataField
+                          label="Azimuth"
+                          value={formatDegrees(solarPosition?.azimuth)}
+                          tooltipKey="azimuth"
+                          activeTooltip={activeTooltip}
+                          setActiveTooltip={setActiveTooltip}
+                          tooltipDescriptions={tooltipDescriptions}
+                      />
+
+                      <SolarDataField
+                          label="Declination"
+                          value={formatDegrees(solarPosition?.declination)}
+                          tooltipKey="declination"
+                          activeTooltip={activeTooltip}
+                          setActiveTooltip={setActiveTooltip}
+                          tooltipDescriptions={tooltipDescriptions}
+                      />
+
+                      <SolarDataField
+                          label="Hour Angle"
+                          value={formatDegrees(solarPosition?.hourAngle)}
+                          tooltipKey="hourAngle"
+                          textColorClass="text-secondary"
+                          activeTooltip={activeTooltip}
+                          setActiveTooltip={setActiveTooltip}
+                          tooltipDescriptions={tooltipDescriptions}
+                      />
+
+                      <SolarDataField
+                          label="Equation of Time"
+                          value={formatMinutes(solarPosition?.equationOfTime)}
+                          tooltipKey="equationOfTime"
+                          textColorClass="text-secondary"
+                          activeTooltip={activeTooltip}
+                          setActiveTooltip={setActiveTooltip}
+                          tooltipDescriptions={tooltipDescriptions}
+                      />
+                    </div>
+                  </div>
+              )}
+
+              <button
+                  onClick={() => setIsExpanded(!isExpanded)}
+                  className="mt-md px-md py-sm bg-secondary text-surface-container-lowest rounded-lg font-label-lg text-label-lg font-semibold hover:bg-secondary/90 active:bg-secondary/80 transition-colors flex items-center justify-center gap-xs"
+              >
+                <span className="material-symbols-outlined text-[20px]">
+                  {isExpanded ? 'expand_less' : 'expand_more'}
+                </span>
+
+                {isExpanded ? 'Show less' : 'Show more'}
+              </button>
+            </div>
+          </div>
+
+          <div className="w-1/2 pl-md">
+            <div className="h-full rounded-[28px] border border-outline-variant/10 bg-secondary-container/5 px-lg py-lg">
+              <div className="max-w-2xl">
+                <p className="font-label-sm text-label-sm uppercase tracking-[0.24em] text-secondary">
+                  Solar Progression
+                </p>
 
 
+              </div>
 
-        {isExpanded && (
-            <div className="mt-md pt-md border-t border-outline-variant/10">
-              <div className="grid grid-cols-2 gap-md sm:grid-cols-3">
-                <SolarDataField
-                    label="Altitude"
-                    value={formatDegrees(solarPosition?.elevation)}
-                    tooltipKey="altitude"
-                    activeTooltip={activeTooltip}
-                    setActiveTooltip={setActiveTooltip}
-                    tooltipDescriptions={tooltipDescriptions}
-                />
+              <div className="relative mt-lg space-y-lg">
+                <div className="absolute left-[22px] top-2 bottom-2 w-px bg-gradient-to-b from-secondary/50 via-secondary/20 to-transparent" />
 
-                <SolarDataField
-                    label="Azimuth"
-                    value={formatDegrees(solarPosition?.azimuth)}
-                    tooltipKey="azimuth"
-                    activeTooltip={activeTooltip}
-                    setActiveTooltip={setActiveTooltip}
-                    tooltipDescriptions={tooltipDescriptions}
-                />
+                {timelineEvents.map((event) => (
+                    <div key={event.label} className="relative flex gap-md">
+                      <div className="relative z-10 flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-secondary/20 bg-surface text-secondary">
+                        <span className="material-symbols-outlined text-[18px]">
+                          {event.icon}
+                        </span>
+                      </div>
 
-                <SolarDataField
-                    label="Declination"
-                    value={formatDegrees(solarPosition?.declination)}
-                    tooltipKey="declination"
-                    activeTooltip={activeTooltip}
-                    setActiveTooltip={setActiveTooltip}
-                    tooltipDescriptions={tooltipDescriptions}
-                />
+                      <div className="min-w-0 pt-1">
+                        <div className="flex flex-col gap-xs sm:flex-row sm:items-baseline sm:justify-between">
+                          <h4 className="font-title-sm text-title-sm font-semibold text-primary">
+                            {event.label}
+                          </h4>
 
-                <SolarDataField
-                    label="Hour Angle"
-                    value={formatDegrees(solarPosition?.hourAngle)}
-                    tooltipKey="hourAngle"
-                    textColorClass="text-secondary"
-                    activeTooltip={activeTooltip}
-                    setActiveTooltip={setActiveTooltip}
-                    tooltipDescriptions={tooltipDescriptions}
-                />
+                          <p className="font-label-sm text-label-sm uppercase tracking-[0.18em] text-secondary">
+                            {event.time}
+                          </p>
+                        </div>
 
-                <SolarDataField
-                    label="Equation of Time"
-                    value={formatMinutes(solarPosition?.equationOfTime)}
-                    tooltipKey="equationOfTime"
-                    textColorClass="text-secondary"
-                    activeTooltip={activeTooltip}
-                    setActiveTooltip={setActiveTooltip}
-                    tooltipDescriptions={tooltipDescriptions}
-                />
+                        <p className="mt-xs text-body-sm text-on-surface-variant leading-relaxed">
+                          {event.description}
+                        </p>
+                      </div>
+                    </div>
+                ))}
               </div>
             </div>
-        )}
-
-        <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="mt-md px-md py-sm bg-secondary text-surface-container-lowest rounded-lg font-label-lg text-label-lg font-semibold hover:bg-secondary/90 active:bg-secondary/80 transition-colors flex items-center justify-center gap-xs"
-        >
-        <span className="material-symbols-outlined text-[20px]">
-          {isExpanded ? 'expand_less' : 'expand_more'}
-        </span>
-
-          {isExpanded ? 'Show less' : 'Show more'}
-        </button>
+          </div>
+        </div>
       </div>
   );
 };
