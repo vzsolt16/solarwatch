@@ -29,6 +29,7 @@ const InfoButton = ({ tooltipKey, activeTooltip, setActiveTooltip, tooltipDescri
 
             {activeTooltip === tooltipKey && (
                 <div
+                    // eslint-disable-next-line react-hooks/refs
                     ref={refs.setFloating}
                     style={{
                         position: strategy,
@@ -171,9 +172,7 @@ const SolarCard = ({
   if (error) {
     return (
         <div className="bg-surface-container-lowest rounded-xl p-md celestial-shadow min-h-[400px] flex items-center justify-center text-error text-center">
-          Failed to load Budapest solar data.
-          <br />
-          Make sure the backend is running.
+          Failed to load {city} solar data.
         </div>
     );
   }

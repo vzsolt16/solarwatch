@@ -1,9 +1,9 @@
-using Microsoft.AspNetCore.Identity;
+using SolarWatch.Models.Entities;
 
 namespace SolarWatch.Services.Authentication;
 
 public interface ITokenService
 {
     /// <summary>Creates a signed JWT for the given user with the specified role.</summary>
-    string CreateToken(IdentityUser user, string role);
+    string CreateToken(ApplicationUser user, string role);
 }

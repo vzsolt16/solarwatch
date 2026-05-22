@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthForm from '../components/AuthForm';
 import { authApi } from '../api/auth';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 
 const LoginPage = () => {
   const [loading, setLoading] = useState(false);
@@ -18,7 +18,7 @@ const LoginPage = () => {
         email: formData.email,
         password: formData.password
       });
-      login(response.token);
+      login(response);
       navigate('/');
     } catch (err) {
       setError(err.message || 'Login failed');

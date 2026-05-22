@@ -1,14 +1,8 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { Link, NavLink } from 'react-router-dom';
+import { useAuth } from '../context/useAuth';
 
 const Navbar = () => {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
+  const { user } = useAuth();
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-md shadow-sm shadow-primary/5">
@@ -18,19 +12,31 @@ const Navbar = () => {
             SolarWatch
           </Link>
           <div className="hidden md:flex gap-lg items-center">
-            <Link className="font-label-lg text-label-lg text-primary font-bold border-b-2 border-primary pb-1 transition-transform active:scale-95" to="#">Search</Link>
+            <NavLink
+                to="/"
+                end
+                className={({ isActive }) =>
+                    `font-label-lg text-label-lg pb-1 border-b-2 transition-all ${
+                        isActive
+                            ? 'text-primary font-bold border-secondary'
+                            : 'border-transparent text-on-surface-variant hover:text-secondary'
+                    }`
+                }
+            >
+              Search
+            </NavLink>
             <Link className="font-label-lg text-label-lg text-on-surface-variant hover:text-secondary transition-colors duration-200" to="#">Sun Map</Link>
             <Link className="font-label-lg text-label-lg text-on-surface-variant hover:text-secondary transition-colors duration-200" to="#">Almanac</Link>
           </div>
         </div>
         <div className="flex gap-gutter items-center">
           {user ? (
-            <button 
-              onClick={handleLogout}
-              className="font-label-lg text-label-lg bg-primary text-on-primary px-md py-xs rounded-full hover:bg-primary-container transition-all active:scale-95"
+            <NavLink
+              to="/profile"
+              className={({ isActive }) => `font-label-lg text-label-lg transition-colors px-sm py-xs ${isActive ? 'text-primary font-bold border-b-2 border-secondary' : 'text-on-surface-variant hover:text-secondary transition-colors duration-200'}`}
             >
-              Log Out
-            </button>
+              Profile
+            </NavLink>
           ) : (
             <>
               <Link 

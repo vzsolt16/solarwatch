@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthForm from '../components/AuthForm';
 import { authApi } from '../api/auth';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 
 const RegisterPage = () => {
   const [loading, setLoading] = useState(false);
@@ -31,7 +31,7 @@ const RegisterPage = () => {
           email: formData.email,
           password: formData.password
         });
-        login(loginResponse.token);
+        login(loginResponse);
       } catch {
         // If auto-login fails, redirect to login page
         navigate('/login');

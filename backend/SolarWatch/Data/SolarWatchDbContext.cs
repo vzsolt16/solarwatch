@@ -6,7 +6,7 @@ using SolarWatch.Models.Entities;
 
 namespace SolarWatch.Data;
 
-public class SolarWatchDbContext : IdentityDbContext<IdentityUser, IdentityRole, string>
+public class SolarWatchDbContext : IdentityDbContext<ApplicationUser, IdentityRole, string>
 {
     public SolarWatchDbContext(DbContextOptions<SolarWatchDbContext> options) : base(options) { }
 

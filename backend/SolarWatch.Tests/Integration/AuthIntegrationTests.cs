@@ -103,4 +103,5 @@ public class AuthIntegrationTests
         externalApiHandler.SunriseSunsetCallCount.Should().Be(1);
         externalApiHandler.TimeZoneCallCount.Should().Be(1);
     }
+
 }

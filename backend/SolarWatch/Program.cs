@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using SolarWatch.Data;
+using SolarWatch.Models.Entities;
 using SolarWatch.Services;
 using SolarWatch.Services.Authentication;
 using SolarWatch.Services.Repository;
@@ -136,7 +137,7 @@ void AddAuthentication()
 void AddIdentity()
 {
     builder.Services
-        .AddIdentityCore<IdentityUser>(options =>
+        .AddIdentityCore<ApplicationUser>(options =>
         {
             options.Password.RequireDigit           = false;
             options.Password.RequiredLength         = 6;

@@ -49,7 +49,7 @@ public class AuthController : ControllerBase
             return ValidationProblem();
         }
 
-        return Ok(new AuthResponse(result.Email, result.UserName, result.Token));
+        return Ok(new AuthResponse(result.Email, result.UserName, result.Token, result.FavoriteCity));
     }
 
     private void AddErrors(AuthResult result)

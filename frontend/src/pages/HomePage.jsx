@@ -1,8 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Hero from '../components/Hero';
 import SolarCard from '../components/SolarCard';
 import { solarApi } from '../api';
-import {useAuth} from "../context/AuthContext.jsx";
+import { useAuth } from '../context/useAuth';
 
 const HomePage = () => {
   const [solarData, setSolarData] = useState(null);
@@ -10,7 +10,8 @@ const HomePage = () => {
   const [error, setError] = useState(null);
   const [city, setCity] = useState('Budapest');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-  const { token } = useAuth();
+  const hasLoadedDefaultCity = useRef(false);
+  const { token, user, loading: authLoading } = useAuth();
 
   const fetchData = useCallback(async (selectedCity, selectedDate) => {
     try {
@@ -27,10 +28,15 @@ const HomePage = () => {
   }, [token]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchData(city, date);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (authLoading || hasLoadedDefaultCity.current) {
+      return;
+    }
+
+    const defaultCity = user?.favoriteCity?.trim() || 'Budapest';
+    hasLoadedDefaultCity.current = true;
+    setCity(defaultCity);
+    fetchData(defaultCity, date);
+  }, [authLoading, user?.favoriteCity, date, fetchData]);
 
   const handleSearch = () => {
     fetchData(city, date);

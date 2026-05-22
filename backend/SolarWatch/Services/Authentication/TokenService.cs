@@ -1,8 +1,8 @@
 using System.Security.Claims;
 using System.Text;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.JsonWebTokens;   // JsonWebTokenHandler + JwtRegisteredClaimNames
 using Microsoft.IdentityModel.Tokens;
+using SolarWatch.Models.Entities;
 
 namespace SolarWatch.Services.Authentication;
 
@@ -26,7 +26,7 @@ public class TokenService : ITokenService
                                 "Set it via: dotnet user-secrets set \"Jwt:IssuerSigningKey\" \"<secret>\"");
     }
 
-    public string CreateToken(IdentityUser user, string role)
+    public string CreateToken(ApplicationUser user, string role)
     {
         var descriptor = new SecurityTokenDescriptor
         {
@@ -42,7 +42,7 @@ public class TokenService : ITokenService
         return new JsonWebTokenHandler().CreateToken(descriptor);
     }
 
-    private static List<Claim> CreateClaims(IdentityUser user, string role)
+    private static List<Claim> CreateClaims(ApplicationUser user, string role)
     {
         var claims = new List<Claim>
         {
