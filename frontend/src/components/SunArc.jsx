@@ -10,7 +10,7 @@ const polarToCartesian = (centerX, centerY, radius, angleDegrees) => {
 };
 
 const ARC_CENTER_X = 250;
-const ARC_CENTER_Y = 270;
+const ARC_CENTER_Y = 260;
 const ARC_RADIUS = 230;
 
 const describeArc = (startAngle, endAngle) => {

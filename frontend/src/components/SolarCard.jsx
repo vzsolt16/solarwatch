@@ -3,8 +3,6 @@ import SunArc from './SunArc';
 import { useFloating, offset, flip, shift, autoUpdate } from '@floating-ui/react';
 
 const InfoButton = ({ tooltipKey, activeTooltip, setActiveTooltip, tooltipDescriptions }) => {
-    const [reference, setReference] = useState(null);
-    const [floating, setFloating] = useState(null);
 
     const {
         x,
@@ -75,6 +73,58 @@ const SolarDataField = ({
     </div>
 );
 
+const LightPhaseCard = ({
+                          label,
+                          icon,
+                          rangeLabel,
+                          description,
+                          isActive,
+                        }) => (
+    <div
+        className={`rounded-2xl border px-md py-md transition-colors ${
+            isActive
+                ? 'border-secondary/30 bg-secondary-container/15'
+                : 'border-outline-variant/10 bg-surface'
+        }`}
+    >
+      <div className="flex items-center justify-between gap-sm">
+        <div className="flex items-center gap-sm">
+          <div
+              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
+                  isActive ? 'bg-secondary text-surface-container-lowest' : 'bg-secondary-container/10 text-secondary'
+              }`}
+          >
+            <span className="material-symbols-outlined text-[18px]">{icon}</span>
+          </div>
+
+          <div>
+            <p className="font-title-sm text-title-sm font-semibold text-primary">
+              {label}
+            </p>
+
+            <p className="font-label-sm text-label-sm uppercase tracking-[0.16em] text-secondary">
+              {rangeLabel}
+            </p>
+          </div>
+        </div>
+
+          <span
+              className={`inline-flex items-center justify-center text-center rounded-full px-sm py-xs font-label-sm text-label-sm ${
+                  isActive
+                      ? 'bg-secondary text-surface-container-lowest'
+                      : 'bg-secondary-container/10 text-secondary'
+              }`}
+          >
+            {isActive ? 'Active now' : 'Not active'}
+        </span>
+      </div>
+
+      <p className="mt-sm text-body-sm leading-relaxed text-on-surface-variant">
+        {description}
+      </p>
+    </div>
+);
+
 const SolarCard = ({
                      city,
                      sunrise,
@@ -85,7 +135,6 @@ const SolarCard = ({
                      error,
                    }) => {
   const [now, setNow] = useState(() => Date.now());
-  const [isExpanded, setIsExpanded] = useState(false);
   const [showTimeline, setShowTimeline] = useState(false);
   const [activeTooltip, setActiveTooltip] = useState(null);
   const cardRef = useRef(null);
@@ -221,6 +270,15 @@ const SolarCard = ({
       sunriseDate && sunsetDate
           ? new Date((sunriseDate.getTime() + sunsetDate.getTime()) / 2)
           : null;
+  const currentElevation = solarPosition?.elevation;
+  const isBlueHourActive =
+      typeof currentElevation === 'number' &&
+      currentElevation >= -6 &&
+      currentElevation <= -4;
+  const isGoldenHourActive =
+      typeof currentElevation === 'number' &&
+      currentElevation > -4 &&
+      currentElevation <= 6;
 
   const timelineEvents = [
     {
@@ -231,11 +289,25 @@ const SolarCard = ({
           'The sun is roughly 18 degrees below the horizon, and the first subtle lift in the sky begins to separate night from morning.',
     },
     {
+      icon: 'wb_twilight',
+      label: 'Blue Hour',
+      time: formatTimelineTime(getEventDate(sunrise, -35)),
+      description:
+          'Cool pre-dawn and post-sunset tones settle in while the sun sits just below the horizon, softening contrast and enriching shadows.',
+    },
+    {
       icon: 'sunny',
       label: 'Sunrise',
       time: formattedSunrise || '--',
       description:
           'The sun meets the horizon and the day opens with warm, directional light that starts carving shape into the landscape.',
+    },
+    {
+      icon: 'light_mode',
+      label: 'Golden Hour',
+      time: formatTimelineTime(getEventDate(sunrise, 35)),
+      description:
+          'Low-angle sunlight turns warm and flattering here, often bringing the most inviting light for portraits, architecture, and landscape work.',
     },
     {
       icon: 'clear_day',
@@ -253,163 +325,183 @@ const SolarCard = ({
     },
   ];
 
-  return (
-      <div ref={cardRef} className="bg-surface-container-lowest rounded-xl p-md celestial-shadow overflow-hidden">
-        <div className="flex items-start justify-between gap-md">
-          <div>
-            <h2 className="font-headline-md text-headline-md font-bold text-primary">
-              {city}
-            </h2>
+    return (
+        <div
+            ref={cardRef}
+            className="relative overflow-hidden rounded-xl bg-surface-container-lowest p-md celestial-shadow"
+        >
+            <div className="flex flex-col gap-md sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                    <h2 className="font-headline-md text-headline-md font-bold text-primary">
+                        {city}
+                    </h2>
 
-            <div className="mt-sm flex flex-wrap items-center gap-sm text-secondary">
-              <div className="flex items-center gap-xs bg-secondary-container/10 px-sm py-xs rounded-full">
-                <span className="material-symbols-outlined text-[16px]">
-                  schedule
-                </span>
+                    <div className="mt-sm flex flex-wrap items-center gap-sm text-secondary">
+                        <div className="flex items-center gap-xs rounded-full bg-secondary-container/10 px-sm py-xs">
+            <span className="material-symbols-outlined text-[16px]">
+              schedule
+            </span>
 
-                <span className="font-label-sm text-label-sm">
-                  {currentCityTime || '--:--'}
-                </span>
-              </div>
-
-              <p className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">
-                {timezone || 'Local'} solar position
-              </p>
-            </div>
-          </div>
-
-          <button
-              onClick={() => {
-                setShowTimeline(!showTimeline);
-                setActiveTooltip(null);
-              }}
-              className="shrink-0 px-md py-sm rounded-full border border-secondary/20 bg-secondary-container/10 text-secondary font-label-sm text-label-sm font-semibold hover:bg-secondary/15 active:bg-secondary/20 transition-colors"
-          >
-            {showTimeline ? 'Back to overview' : 'See timeline'}
-          </button>
-        </div>
-
-        <div className="mt-lg flex w-[200%] transition-transform duration-500 ease-out" style={{ transform: showTimeline ? 'translateX(-50%)' : 'translateX(0%)' }}>
-          <div className="w-1/2 pr-md">
-            <div className="flex h-full flex-col justify-between">
-              <SunArc
-                  sunrise={sunrise}
-                  sunset={sunset}
-                  timezone={timezone}
-                  sunriseLabel={formattedSunrise}
-                  sunsetLabel={formattedSunset}
-              />
-
-              {isExpanded && (
-                  <div className="mt-md pt-md border-t border-outline-variant/10">
-                    <div className="grid grid-cols-2 gap-md sm:grid-cols-3">
-                      <SolarDataField
-                          label="Altitude"
-                          value={formatDegrees(solarPosition?.elevation)}
-                          tooltipKey="altitude"
-                          activeTooltip={activeTooltip}
-                          setActiveTooltip={setActiveTooltip}
-                          tooltipDescriptions={tooltipDescriptions}
-                      />
-
-                      <SolarDataField
-                          label="Azimuth"
-                          value={formatDegrees(solarPosition?.azimuth)}
-                          tooltipKey="azimuth"
-                          activeTooltip={activeTooltip}
-                          setActiveTooltip={setActiveTooltip}
-                          tooltipDescriptions={tooltipDescriptions}
-                      />
-
-                      <SolarDataField
-                          label="Declination"
-                          value={formatDegrees(solarPosition?.declination)}
-                          tooltipKey="declination"
-                          activeTooltip={activeTooltip}
-                          setActiveTooltip={setActiveTooltip}
-                          tooltipDescriptions={tooltipDescriptions}
-                      />
-
-                      <SolarDataField
-                          label="Hour Angle"
-                          value={formatDegrees(solarPosition?.hourAngle)}
-                          tooltipKey="hourAngle"
-                          textColorClass="text-secondary"
-                          activeTooltip={activeTooltip}
-                          setActiveTooltip={setActiveTooltip}
-                          tooltipDescriptions={tooltipDescriptions}
-                      />
-
-                      <SolarDataField
-                          label="Equation of Time"
-                          value={formatMinutes(solarPosition?.equationOfTime)}
-                          tooltipKey="equationOfTime"
-                          textColorClass="text-secondary"
-                          activeTooltip={activeTooltip}
-                          setActiveTooltip={setActiveTooltip}
-                          tooltipDescriptions={tooltipDescriptions}
-                      />
-                    </div>
-                  </div>
-              )}
-
-              <button
-                  onClick={() => setIsExpanded(!isExpanded)}
-                  className="mt-md px-md py-sm bg-secondary text-surface-container-lowest rounded-lg font-label-lg text-label-lg font-semibold hover:bg-secondary/90 active:bg-secondary/80 transition-colors flex items-center justify-center gap-xs"
-              >
-                <span className="material-symbols-outlined text-[20px]">
-                  {isExpanded ? 'expand_less' : 'expand_more'}
-                </span>
-
-                {isExpanded ? 'Show less' : 'Show more'}
-              </button>
-            </div>
-          </div>
-
-          <div className="w-1/2 pl-md">
-            <div className="h-full rounded-[28px] border border-outline-variant/10 bg-secondary-container/5 px-lg py-lg">
-              <div className="max-w-2xl">
-                <p className="font-label-sm text-label-sm uppercase tracking-[0.24em] text-secondary">
-                  Solar Progression
-                </p>
-
-
-              </div>
-
-              <div className="relative mt-lg space-y-lg">
-                <div className="absolute left-[22px] top-2 bottom-2 w-px bg-gradient-to-b from-secondary/50 via-secondary/20 to-transparent" />
-
-                {timelineEvents.map((event) => (
-                    <div key={event.label} className="relative flex gap-md">
-                      <div className="relative z-10 flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-secondary/20 bg-surface text-secondary">
-                        <span className="material-symbols-outlined text-[18px]">
-                          {event.icon}
-                        </span>
-                      </div>
-
-                      <div className="min-w-0 pt-1">
-                        <div className="flex flex-col gap-xs sm:flex-row sm:items-baseline sm:justify-between">
-                          <h4 className="font-title-sm text-title-sm font-semibold text-primary">
-                            {event.label}
-                          </h4>
-
-                          <p className="font-label-sm text-label-sm uppercase tracking-[0.18em] text-secondary">
-                            {event.time}
-                          </p>
+                            <span className="font-label-sm text-label-sm">
+              {currentCityTime || '--:--'}
+            </span>
                         </div>
 
-                        <p className="mt-xs text-body-sm text-on-surface-variant leading-relaxed">
-                          {event.description}
+                        <p className="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">
+                            {timezone || 'Local'} solar position
                         </p>
-                      </div>
                     </div>
-                ))}
-              </div>
+                </div>
+
+                <button
+                    onClick={() => {
+                        setShowTimeline(!showTimeline);
+                        setActiveTooltip(null);
+                    }}
+                    className="shrink-0 rounded-full border border-secondary/20 bg-secondary-container/10 px-md py-sm font-label-sm text-label-sm font-semibold text-secondary transition-colors hover:bg-secondary/15 active:bg-secondary/20"
+                >
+                    {showTimeline ? 'Back to overview' : 'See timeline'}
+                </button>
             </div>
-          </div>
+
+            <div className="relative mt-lg min-h-[400px]">
+                {/* OVERVIEW PANEL */}
+                <div
+                    className={`w-full transition-all duration-500 ease-out ${
+                        showTimeline
+                            ? 'pointer-events-none absolute inset-0 -translate-x-full opacity-0'
+                            : 'relative translate-x-0 opacity-100'
+                    }`}
+                >
+                    <div className="flex flex-col gap-md">
+                        <SunArc
+                            sunrise={sunrise}
+                            sunset={sunset}
+                            timezone={timezone}
+                            sunriseLabel={formattedSunrise}
+                            sunsetLabel={formattedSunset}
+                        />
+
+                        <div className="mt-md border-t border-outline-variant/10 pt-md">
+                            <div className="grid grid-cols-2 gap-md sm:grid-cols-3">
+                                <SolarDataField
+                                    label="Altitude"
+                                    value={formatDegrees(solarPosition?.elevation)}
+                                    tooltipKey="altitude"
+                                    activeTooltip={activeTooltip}
+                                    setActiveTooltip={setActiveTooltip}
+                                    tooltipDescriptions={tooltipDescriptions}
+                                />
+
+                                <SolarDataField
+                                    label="Azimuth"
+                                    value={formatDegrees(solarPosition?.azimuth)}
+                                    tooltipKey="azimuth"
+                                    activeTooltip={activeTooltip}
+                                    setActiveTooltip={setActiveTooltip}
+                                    tooltipDescriptions={tooltipDescriptions}
+                                />
+
+                                <SolarDataField
+                                    label="Declination"
+                                    value={formatDegrees(solarPosition?.declination)}
+                                    tooltipKey="declination"
+                                    activeTooltip={activeTooltip}
+                                    setActiveTooltip={setActiveTooltip}
+                                    tooltipDescriptions={tooltipDescriptions}
+                                />
+
+                                <SolarDataField
+                                    label="Hour Angle"
+                                    value={formatDegrees(solarPosition?.hourAngle)}
+                                    tooltipKey="hourAngle"
+                                    textColorClass="text-secondary"
+                                    activeTooltip={activeTooltip}
+                                    setActiveTooltip={setActiveTooltip}
+                                    tooltipDescriptions={tooltipDescriptions}
+                                />
+
+                                <SolarDataField
+                                    label="Equation of Time"
+                                    value={formatMinutes(solarPosition?.equationOfTime)}
+                                    tooltipKey="equationOfTime"
+                                    textColorClass="text-secondary"
+                                    activeTooltip={activeTooltip}
+                                    setActiveTooltip={setActiveTooltip}
+                                    tooltipDescriptions={tooltipDescriptions}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="mt-md grid gap-md lg:grid-cols-2">
+                            <LightPhaseCard
+                                label="Blue Hour"
+                                icon="wb_twilight"
+                                rangeLabel="-6° to -4° elevation"
+                                description="A cooler, softer phase when the sun sits just below the horizon and ambient light becomes especially gentle and cinematic."
+                                isActive={isBlueHourActive}
+                            />
+
+                            <LightPhaseCard
+                                label="Golden Hour"
+                                icon="light_mode"
+                                rangeLabel="-4° to 6° elevation"
+                                description="A warm low-angle window with long shadows and flattering contrast, often prized for portraits and landscape photography."
+                                isActive={isGoldenHourActive}
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                {/* TIMELINE PANEL */}
+                <div
+                    className={`w-full transition-all duration-500 ease-out ${
+                        showTimeline
+                            ? 'relative translate-x-0 opacity-100'
+                            : 'pointer-events-none absolute inset-0 translate-x-full opacity-0'
+                    }`}
+                >
+                    <div className="w-full rounded-[28px] border border-outline-variant/10 bg-secondary-container/5 px-sm py-lg sm:px-lg">
+                        <div className="w-full">
+                            <p className="font-label-sm text-label-sm uppercase tracking-[0.24em] text-secondary">
+                                Solar Progression
+                            </p>
+                        </div>
+
+                        <div className="relative mt-lg space-y-lg">
+                            <div className="absolute bottom-2 left-[22px] top-2 w-px bg-gradient-to-b from-secondary/50 via-secondary/20 to-transparent" />
+
+                            {timelineEvents.map((event) => (
+                                <div key={event.label} className="relative flex gap-md">
+                                    <div className="relative z-10 flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-secondary/20 bg-surface text-secondary">
+                  <span className="material-symbols-outlined text-[18px]">
+                    {event.icon}
+                  </span>
+                                    </div>
+
+                                    <div className="min-w-0 pt-1">
+                                        <div className="flex flex-col gap-xs sm:flex-row sm:items-baseline sm:justify-between">
+                                            <h4 className="font-title-sm text-title-sm font-semibold text-primary">
+                                                {event.label}
+                                            </h4>
+
+                                            <p className="font-label-sm text-label-sm uppercase tracking-[0.18em] text-secondary">
+                                                {event.time}
+                                            </p>
+                                        </div>
+
+                                        <p className="mt-xs text-body-sm leading-relaxed text-on-surface-variant">
+                                            {event.description}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-  );
+    );
 };
 
 export default SolarCard;
