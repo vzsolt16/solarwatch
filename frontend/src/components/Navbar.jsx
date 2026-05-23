@@ -12,19 +12,21 @@ const Navbar = () => {
             SolarWatch
           </Link>
           <div className="hidden md:flex gap-lg items-center">
-            <NavLink
-                to="/"
-                end
-                className={({ isActive }) =>
-                    `font-label-lg text-label-lg pb-1 border-b-2 transition-all ${
-                        isActive
-                            ? 'text-primary font-bold border-secondary'
-                            : 'border-transparent text-on-surface-variant hover:text-secondary'
-                    }`
-                }
-            >
-              Search
-            </NavLink>
+            {user && (
+              <NavLink
+                  to="/"
+                  end
+                  className={({ isActive }) =>
+                      `font-label-lg text-label-lg pb-1 border-b-2 transition-all ${
+                          isActive
+                              ? 'text-primary font-bold border-secondary'
+                              : 'border-transparent text-on-surface-variant hover:text-secondary'
+                      }`
+                  }
+              >
+                Search
+              </NavLink>
+            )}
             <Link className="font-label-lg text-label-lg text-on-surface-variant hover:text-secondary transition-colors duration-200" to="#">Sun Map</Link>
             <Link className="font-label-lg text-label-lg text-on-surface-variant hover:text-secondary transition-colors duration-200" to="#">Almanac</Link>
           </div>
