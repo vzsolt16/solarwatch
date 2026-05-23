@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using SolarWatch.Contracts;
 using SolarWatch.Services.Authentication;
 
@@ -6,6 +7,7 @@ namespace SolarWatch.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[EnableRateLimiting("AuthPolicy")]
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
