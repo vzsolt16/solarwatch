@@ -194,16 +194,32 @@ const SolarCard = ({
             "The small difference between clock time and real Sun time, caused by Earth’s orbit.",
     };
 
+  const parseLocalTimestamp = (timeStr) => {
+    if (!timeStr) return null;
+    const match = timeStr.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/);
+    if (!match) return new Date(timeStr);
+
+    const [, year, month, day, hour, minute, second] = match;
+    return new Date(
+        Number(year),
+        Number(month) - 1,
+        Number(day),
+        Number(hour),
+        Number(minute),
+        Number(second)
+    );
+  };
+
   const formatTime = (timeStr) => {
     if (!timeStr) return null;
 
     try {
-      const date = new Date(timeStr);
+      const date = parseLocalTimestamp(timeStr);
 
-      return date.toLocaleTimeString([], {
+      return new Intl.DateTimeFormat([], {
         hour: '2-digit',
         minute: '2-digit',
-      });
+      }).format(date);
     } catch {
       return timeStr;
     }
@@ -236,9 +252,9 @@ const SolarCard = ({
   const getEventDate = (baseTime, minuteOffset = 0) => {
     if (!baseTime) return null;
 
-    const date = new Date(baseTime);
+    const date = parseLocalTimestamp(baseTime);
 
-    if (Number.isNaN(date.getTime())) {
+    if (!date || Number.isNaN(date.getTime())) {
       return null;
     }
 
@@ -251,7 +267,6 @@ const SolarCard = ({
 
     try {
       return new Intl.DateTimeFormat([], {
-        timeZone: timezone || undefined,
         hour: '2-digit',
         minute: '2-digit',
       }).format(date);
@@ -265,6 +280,7 @@ const SolarCard = ({
 
   const sunriseDate = getEventDate(sunrise);
   const sunsetDate = getEventDate(sunset);
+  
   const solarNoonDate =
       sunriseDate && sunsetDate
           ? new Date((sunriseDate.getTime() + sunsetDate.getTime()) / 2)
@@ -289,10 +305,10 @@ const SolarCard = ({
     },
     {
       icon: 'wb_twilight',
-      label: 'Blue Hour',
+      label: 'Blue Hour (Dawn)',
       time: formatTimelineTime(getEventDate(sunrise, -35)),
       description:
-          'Cool pre-dawn and post-sunset tones settle in while the sun sits just below the horizon, softening contrast and enriching shadows.',
+          'Cool pre-dawn tones settle in while the sun sits just below the horizon, softening contrast and enriching shadows.',
     },
     {
       icon: 'sunny',
@@ -303,7 +319,7 @@ const SolarCard = ({
     },
     {
       icon: 'light_mode',
-      label: 'Golden Hour',
+      label: 'Golden Hour (Morning)',
       time: formatTimelineTime(getEventDate(sunrise, 35)),
       description:
           'Low-angle sunlight turns warm and flattering here, often bringing the most inviting light for portraits, architecture, and landscape work.',
@@ -316,11 +332,25 @@ const SolarCard = ({
           'The sun reaches its highest position of the day, delivering the brightest and most direct light across the scene.',
     },
     {
+      icon: 'light_mode',
+      label: 'Golden Hour (Evening)',
+      time: formatTimelineTime(getEventDate(sunset, -35)),
+      description:
+          'The warm, golden light returns just before sunset, offering another perfect window for photography.',
+    },
+    {
       icon: 'wb_sunny',
       label: 'Sunset',
       time: formattedSunset || '--',
       description:
           'The sun drops back to the horizon and the light transitions into a softer, more atmospheric palette.',
+    },
+    {
+      icon: 'wb_twilight',
+      label: 'Blue Hour (Dusk)',
+      time: formatTimelineTime(getEventDate(sunset, 35)),
+      description:
+          'Cool post-sunset tones settle in as the sun dips below the horizon, creating a serene, atmospheric glow.',
     },
   ];
 
