@@ -134,6 +134,7 @@ const FavoriteCityHero = ({ user, token, updateProfile }) => {
           <span className="material-symbols-outlined text-[18px]">
             close
           </span>
+
                             </button>
                         </div>
 
