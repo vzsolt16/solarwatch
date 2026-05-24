@@ -127,7 +127,7 @@ void AddServices()
             ForwardedHeaders.XForwardedFor |
             ForwardedHeaders.XForwardedProto;
 
-        options.KnownIPNetworks.Clear();
+        options.KnownNetworks.Clear();
         options.KnownProxies.Clear();
     });
 }
