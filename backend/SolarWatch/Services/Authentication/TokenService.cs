@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.IdentityModel.JsonWebTokens;   // JsonWebTokenHandler + JwtRegisteredClaimNames
 using Microsoft.IdentityModel.Tokens;
@@ -9,6 +10,7 @@ namespace SolarWatch.Services.Authentication;
 public class TokenService : ITokenService
 {
     private const int ExpirationMinutes = 30;
+    private const int RefreshTokenExpirationDays = 7;
 
     private readonly string _validIssuer;
     private readonly string _validAudience;
@@ -40,6 +42,21 @@ public class TokenService : ITokenService
         // JsonWebTokenHandler is the .NET 10 replacement for the obsolete JwtSecurityTokenHandler.
         // CreateToken() returns the token string directly — no .WriteToken() call needed.
         return new JsonWebTokenHandler().CreateToken(descriptor);
+    }
+
+    public RefreshToken CreateRefreshToken(string userId)
+    {
+        var randomNumber = new byte[64];
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(randomNumber);
+
+        return new RefreshToken
+        {
+            Token = Convert.ToBase64String(randomNumber),
+            UserId = userId,
+            ExpiresAt = DateTime.UtcNow.AddDays(RefreshTokenExpirationDays),
+            IsRevoked = false
+        };
     }
 
     private static List<Claim> CreateClaims(ApplicationUser user, string role)

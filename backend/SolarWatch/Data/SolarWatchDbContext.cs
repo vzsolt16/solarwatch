@@ -12,6 +12,7 @@ public class SolarWatchDbContext : IdentityDbContext<ApplicationUser, IdentityRo
 
     public DbSet<City> Cities { get; set; }
     public DbSet<SunriseSunset> SunriseSunsets { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

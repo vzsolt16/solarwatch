@@ -48,8 +48,9 @@ public class GeocodingService : IGeocodingService
         }
         
         var apiKey = _configuration["OpenWeather:ApiKey"];
+        var encodedCity = Uri.EscapeDataString(city);
         var url =
-            $"https://api.openweathermap.org/geo/1.0/direct?q={city}&limit=1&appid={apiKey}";
+            $"https://api.openweathermap.org/geo/1.0/direct?q={encodedCity}&limit=1&appid={apiKey}";
 
         _logger.LogInformation("Calling OpenWeather Geocoding API for city: {City}", city);
 

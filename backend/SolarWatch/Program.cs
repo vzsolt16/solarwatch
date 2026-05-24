@@ -56,10 +56,18 @@ void AddServices()
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddCors(options =>
     {
-        options.AddPolicy("AllowFrontend",
-            policy => policy.WithOrigins("http://localhost:5173") // Vite's default port
-                            .AllowAnyMethod()
-                            .AllowAnyHeader());
+        var frontendOrigins =
+            builder.Configuration["AllowedOrigins"]?
+                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            ?? ["http://localhost:5173"];
+
+        options.AddPolicy("AllowFrontend", policy =>
+        {
+            policy.WithOrigins(frontendOrigins)
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
+        });
     });
 
     // Typed HttpClient avoids socket exhaustion from new HttpClient() per call.
@@ -184,6 +192,15 @@ void AddAuthentication()
                 IssuerSigningKey      = new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(issuerSigningKey))
             };
+
+            options.Events = new JwtBearerEvents
+            {
+                OnMessageReceived = context =>
+                {
+                    context.Token = context.Request.Cookies["accessToken"];
+                    return Task.CompletedTask;
+                }
+            };
         });
 }
 
@@ -192,11 +209,11 @@ void AddIdentity()
     builder.Services
         .AddIdentityCore<ApplicationUser>(options =>
         {
-            options.Password.RequireDigit           = false;
-            options.Password.RequiredLength         = 6;
-            options.Password.RequireLowercase       = false;
+            options.Password.RequireDigit           = true;
+            options.Password.RequiredLength         = 8;
+            options.Password.RequireLowercase       = true;
             options.Password.RequireNonAlphanumeric = false;
-            options.Password.RequireUppercase       = false;
+            options.Password.RequireUppercase       = true;
             options.User.RequireUniqueEmail         = true;
         })
         .AddRoles<IdentityRole>()               // must come before AddEntityFrameworkStores

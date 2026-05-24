@@ -1,16 +1,14 @@
 import { request } from './client';
 
 export const profileApi = {
-  getProfile: (token) => request('/api/profile', { token }),
+  getProfile: () => request('/api/profile'),
 
-  updateFavoriteCity: (city, token) => request('/api/profile/favorite-city', {
+  updateFavoriteCity: (city) => request('/api/profile/favorite-city', {
     method: 'PUT',
     body: { city },
-    token,
   }),
 
-  deleteFavoriteCity: (token) => request('/api/profile/favorite-city', {
+  deleteFavoriteCity: () => request('/api/profile/favorite-city', {
     method: 'DELETE',
-    token,
   }),
 };

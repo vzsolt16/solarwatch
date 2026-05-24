@@ -1,11 +1,14 @@
 namespace SolarWatch.Controllers;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SolarWatch.Services;
 using SolarWatch.Exceptions;
+using SolarWatch.Services.Authentication;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize(Roles = $"{Roles.User}, {Roles.Admin}")]
 public class SolarWatchController : ControllerBase
 {
     private readonly ISunriseSunsetService _solarService;

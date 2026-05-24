@@ -10,4 +10,8 @@ export const authApi = {
     method: 'POST',
     body: credentials,
   }),
+
+  logout: () => request('/Auth/Logout', {
+    method: 'POST'
+  }),
 };

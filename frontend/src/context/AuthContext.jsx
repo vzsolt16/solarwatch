@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
-import { profileApi } from '../api';
+import { profileApi, authApi } from '../api';
 import { AuthContext } from './authContextValue';
 
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(localStorage.getItem('token'));
   const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem('user');
 
@@ -18,7 +17,7 @@ export const AuthProvider = ({ children }) => {
       return null;
     }
   });
-  const [loading, setLoading] = useState(Boolean(token));
+  const [loading, setLoading] = useState(true);
 
   const persistUser = (profile) => {
     setUser(profile);
@@ -26,8 +25,6 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = (authResponse) => {
-    localStorage.setItem('token', authResponse.token);
-    setToken(authResponse.token);
     persistUser({
       email: authResponse.email,
       userName: authResponse.userName,
@@ -36,12 +33,16 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setToken(null);
-    setUser(null);
-    setLoading(false);
+  const logout = async () => {
+    try {
+      await authApi.logout();
+    } catch (error) {
+      console.error('Logout failed', error);
+    } finally {
+      localStorage.removeItem('user');
+      setUser(null);
+      setLoading(false);
+    }
   };
 
   const updateProfile = (profile) => {
@@ -53,17 +54,13 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (!token) {
-      return;
-    }
-
     let cancelled = false;
 
     const loadProfile = async () => {
       setLoading(true);
 
       try {
-        const profile = await profileApi.getProfile(token);
+        const profile = await profileApi.getProfile();
 
         if (!cancelled) {
           persistUser({
@@ -74,7 +71,8 @@ export const AuthProvider = ({ children }) => {
         }
       } catch (error) {
         if (!cancelled && error.status === 401) {
-          logout();
+          localStorage.removeItem('user');
+          setUser(null);
         }
       } finally {
         if (!cancelled) {
@@ -88,10 +86,10 @@ export const AuthProvider = ({ children }) => {
     return () => {
       cancelled = true;
     };
-  }, [token]);
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, loading, updateProfile }}>
+    <AuthContext.Provider value={{ user, login, logout, loading, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );
