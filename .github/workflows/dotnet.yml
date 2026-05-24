@@ -31,3 +31,7 @@ jobs:
     - name: Test
       working-directory: backend/SolarWatch
       run: dotnet test --no-build --verbosity normal
+      
+    - name: Publish
+      working-directory: backend/SolarWatch
+      run: dotnet publish -c Release -o publish
