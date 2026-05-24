@@ -27,11 +27,11 @@ app.UseForwardedHeaders();
 await ApplyMigrationsAsync();
 await SeedRolesAsync();
 
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+//}
 
 app.UseHttpsRedirection();
 
