@@ -97,21 +97,19 @@ public class AuthController : ControllerBase
 
     private void SetTokenCookies(string accessToken, string refreshToken)
     {
-        var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
-
         Response.Cookies.Append("accessToken", accessToken, new CookieOptions
         {
             HttpOnly = true,
-            Secure = !isDevelopment,
-            SameSite = SameSiteMode.Strict,
+            Secure = true,
+            SameSite = SameSiteMode.None,
             Expires = DateTime.UtcNow.AddMinutes(30)
         });
 
         Response.Cookies.Append("refreshToken", refreshToken, new CookieOptions
         {
             HttpOnly = true,
-            Secure = !isDevelopment,
-            SameSite = SameSiteMode.Strict,
+            Secure = true,
+            SameSite = SameSiteMode.None,
             Expires = DateTime.UtcNow.AddDays(7)
         });
     }
