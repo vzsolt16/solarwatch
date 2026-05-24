@@ -24,8 +24,8 @@ COPY --from=build /app/publish .
 # Force container to use port 8080 (default modern .NET container port)
 ENV ASPNETCORE_URLS=http://+:8080
 
-# Enable Swagger
-ENV ASPNETCORE_ENVIRONMENT=Development
+ENV ASPNETCORE_ENVIRONMENT=Production
+
 
 EXPOSE 8080
 
