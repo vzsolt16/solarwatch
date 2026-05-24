@@ -18,7 +18,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 10.0.x
+        dotnet-version: 8.0.x
 
     - name: Restore dependencies
       working-directory: backend/SolarWatch
@@ -31,7 +31,14 @@ jobs:
     - name: Test
       working-directory: backend/SolarWatch
       run: dotnet test --no-build --verbosity normal
-      
+
     - name: Publish
       working-directory: backend/SolarWatch
-      run: dotnet publish -c Release -o publish
+      run: dotnet publish -c Release -o ${{ github.workspace }}/publish
+
+    - name: Deploy to Azure
+      uses: azure/webapps-deploy@v3
+      with:
+        app-name: SolarWatch
+        publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
+        package: publish
