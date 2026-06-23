@@ -10,10 +10,8 @@ Look up sunrise and sunset times for any city on any date. Authenticate, search,
 
 - Sunrise & sunset lookup by city and date
 - User registration and JWT-based authentication (stored in HttpOnly cookies)
-- Role-based access control (User / Admin)
 - City geocoding with results cached in the database
 - Rate limiting — 100 req/min globally, 5 req/min on auth endpoints
-- Swagger UI for API exploration
 
 ---
 
