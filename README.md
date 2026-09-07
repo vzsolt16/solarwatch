@@ -96,8 +96,21 @@ The app runs at `http://localhost:5173`.
 
 ---
 
-## Docker (backend only)
+## Docker Compose
 
+Run the entire application stack (SQL Server, Backend API, and Frontend) using Docker Compose from the project root:
+
+```bash
+docker compose up --build
+```
+
+- Frontend: `http://localhost:5173`
+- Backend API: `http://localhost:8080` (Swagger: `http://localhost:8080/swagger`)
+- SQL Server: `localhost:1434`
+
+### Running containers individually
+
+Backend:
 ```bash
 cd backend/SolarWatch
 docker build -t solarwatch-api .
@@ -106,6 +119,13 @@ docker run -p 8080:8080 \
   -e Jwt__IssuerSigningKey="..." \
   -e TimeZoneDb__ApiKey="..." \
   solarwatch-api
+```
+
+Frontend:
+```bash
+cd frontend
+docker build -t solarwatch-frontend .
+docker run -p 5173:80 solarwatch-frontend
 ```
 
 ---

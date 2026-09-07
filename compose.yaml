@@ -1,0 +1,48 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64
+    container_name: solarwatch-sql
+    environment:
+      SA_PASSWORD: "Mystrongpassword0"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1434:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'Mystrongpassword0' -C -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  api:
+    build:
+      context: ./backend/SolarWatch
+      dockerfile: Dockerfile
+    container_name: solarwatch-api
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=SolarWatchDb;User Id=sa;Password=Mystrongpassword0;TrustServerCertificate=True"
+      AllowedOrigins: "http://localhost:5173"
+      Jwt__IssuerSigningKey: "this-is-my-local-development-secret-key-123456789"
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=http://localhost:8080
+    container_name: solarwatch-frontend
+    depends_on:
+      - api
+    ports:
+      - "5173:80"
+
+volumes:
+  sql_data:
